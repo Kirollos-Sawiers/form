@@ -1,36 +1,45 @@
 import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Modal } from "react-bootstrap";
 import emailjs from "@emailjs/browser";
+import "./form.css";
 
 const MyForm = () => {
-  // const form = useRef();
   const [fromValue, setFormValue] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
+    message:"",
   });
   const [firstNameValidation, setFirstNameValidation] = useState();
   const [lastNameValidation, setLastNameValidation] = useState();
   const [emailValidation, setEmailValidation] = useState();
   const [phoneValidation, setPhoneValidation] = useState();
+  const [show, setShow] = useState(false);
+  
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    handleShow()
     console.log(fromValue);
     emailjs
       .send(
         "service_f4ey52m",
         "template_dy92n3b",
         fromValue,
-        "EuW51s8QSRrW-7v9U"
+        "SdJ8ZhADbSZEMeUKZ"
       )
       .then(
         (result) => {
           console.log(result.text);
-          window.open(
-            "https://www.directmediationservices.co.uk/mediation-legal-aid/"
-          );
+          setTimeout(()=>{
+            window.location.replace(
+              "https://www.directmediationservices.co.uk/mediation-legal-aid/"
+            );
+          },2000)
         },
         (error) => {
           console.log(error.text);
@@ -39,6 +48,7 @@ const MyForm = () => {
   };
 
   return (
+    <>
     <div className="container row justify-content-center mt-5">
       <Form className="col-8" onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="firstName">
@@ -128,15 +138,49 @@ const MyForm = () => {
             This field is requid.
           </Form.Control.Feedback>
         </Form.Group>
-        <div className="container ">
-          <div className="mt-3 row justify-content-end">
-            <Button className="col-2" variant="primary" type="submit">
+        <Form.Group className="message mb-3" controlId="details">
+          <Form.Label>Message</Form.Label>
+          <textarea class="form-control"  type="text"
+            rows="5"
+            placeholder="You can leave any message here..."
+            value={fromValue.message}
+            onChange={(e) => {
+              setFormValue({ ...fromValue, message: e.target.value });
+            }} id="exampleFormControlTextarea1"></textarea>
+        </Form.Group>
+        {/* <div className="container "> */}
+          <div className="button-container">
+            <Button className="form-button" variant="primary" type="submit">
               Submit
             </Button>
           </div>
-        </div>
+        {/* </div> */}
       </Form>
     </div>
+      <p class="footer">
+        By completing this form you consent to Direct Mediation Services holding
+        the information you provide us about you in accordance with our&nbsp;
+        <a
+          href="https://www.directmediationservices.co.uk/wp-content/uploads/2022/09/Privacy-Policy-v-1.1.pdf"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {" "}
+          Privacy notice.
+        </a>
+          By submitting your email address and telephone number to us you
+        consent to us contacting you in order to enable us to deal with your
+        query.
+      </p>
+      <Modal show={show} onHide={handleClose} className="message-container">
+        
+        <Modal.Body>
+          
+          <p className="message-text">Thank you very much for your message! We will be in contact with you shortly.</p>
+        </Modal.Body>
+        
+      </Modal>
+    </>
   );
 };
 
